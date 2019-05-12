@@ -35,16 +35,21 @@ int main(int argc, char** argv)
      int iLowV = 0;
      int iHighV = 255;
 
+    char* nameButtonRgb = "Rgb mode";
+    int callbackButton = 1;
+
      //Create trackbars in "Control" window
-     cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
-     cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+    cvCreateTrackbar("Low Hue/Blue", "Control", &iLowH, 179); //Hue (0 - 179)
+    cvCreateTrackbar("High Hue/Blue", "Control", &iHighH, 179);
 
+    cvCreateTrackbar("Low Saturation/Green", "Control", &iLowS, 255); //Saturation (0 - 255)
+    cvCreateTrackbar("High Saturation/Green", "Control", &iHighS, 255);
 
-     cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-     cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+    cvCreateTrackbar("Low Brightness/Red", "Control", &iLowV, 255); //Value (0 - 255)
+    cvCreateTrackbar("High Brightness/Red", "Control", &iHighV, 255);
 
-     cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
-     cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+    //cvCreateButton(nameButtonRgb, callbackButton, nameButtonRgb, CV_RADIOBOX, 1);
+    //cvCreateButton(const char *button_name = NULL, optional CvButtonCallback on_change = NULL, optional void *userdata = NULL, optional int button_type = CV_PUSH_BUTTON, optional int initial_button_state = 0)
 
     while (true)
     {
@@ -64,7 +69,9 @@ int main(int argc, char** argv)
 
         Mat imgThresholded;
 
-        inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+        //inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+        inRange(imgOriginal, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+        //inRange(imgOriginal, Scalar(0,0,125),Scalar(200,200,255), imgThresholded); //Threshold the image
 
         //morphological opening (remove small objects from the foreground)
 
