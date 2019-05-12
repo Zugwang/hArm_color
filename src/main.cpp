@@ -16,12 +16,12 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    Mat image = imread("images/img3.jpg");
+    Mat image = imread("images/rouge.jpg");
     namedWindow("image",CV_WINDOW_FREERATIO);
     imshow("image", image);
 
     Mat OutputImage;
-    inRange(image,Scalar(0,0,125),Scalar(100,100,255), OutputImage); // Watch out Scalar in BGR
+    inRange(image,Scalar(0,0,125),Scalar(200,200,255), OutputImage); // Watch out Scalar in BGR
 
     namedWindow("Output",CV_WINDOW_FREERATIO);
     imshow("Output",OutputImage);
