@@ -24,6 +24,28 @@ int main(int argc, char** argv)
          return -1;
     }
 
+    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+
+     int iLowH = 0;
+     int iHighH = 179;
+
+     int iLowS = 0;
+     int iHighS = 255;
+
+     int iLowV = 0;
+     int iHighV = 255;
+
+     //Create trackbars in "Control" window
+     cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+     cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+
+
+     cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+     cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+
+     cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
+     cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+
     while (true)
     {
         Mat imgOriginal;
@@ -42,7 +64,7 @@ int main(int argc, char** argv)
 
         Mat imgThresholded;
 
-        inRange(imgHSV, Scalar(0,0,125),Scalar(100,100,255), imgThresholded); //Threshold the image
+        inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
 
         //morphological opening (remove small objects from the foreground)
 
