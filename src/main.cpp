@@ -14,9 +14,10 @@
 using namespace cv;
 using namespace std;
 
+
 int main(int argc, char** argv)
 {
-    VideoCapture cap(0); //capture the video from web cam
+    VideoCapture cap(1); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
@@ -24,32 +25,32 @@ int main(int argc, char** argv)
          return -1;
     }
 
+
     namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-     int iLowH = 0;
-     int iHighH = 179;
+    int buttonHSV = 0;
 
-     int iLowS = 0;
-     int iHighS = 255;
+    int iLowH = 75;
+    int iHighH = 158;
 
-     int iLowV = 0;
-     int iHighV = 255;
+    int iLowS = 120;
+    int iHighS = 232;
 
-    char* nameButtonRgb = "Rgb mode";
-    int callbackButton = 1;
+    int iLowV = 117;
+    int iHighV = 255;
+
+
 
      //Create trackbars in "Control" window
-    cvCreateTrackbar("Low Hue/Blue", "Control", &iLowH, 179); //Hue (0 - 179)
-    cvCreateTrackbar("High Hue/Blue", "Control", &iHighH, 179);
+    cvCreateTrackbar("  RGB / HSB    ", "Control", &buttonHSV, 1);
+    cvCreateTrackbar("Low Hue/Blue   ", "Control", &iLowH, 255); //Hue (0 - 179)
+    cvCreateTrackbar("High Hue/Blue  ", "Control", &iHighH, 255);
+    cvCreateTrackbar("Low Sat/Green  ", "Control", &iLowS, 255); //Saturation (0 - 255)
+    cvCreateTrackbar("High Sat/Green ", "Control", &iHighS, 255);
+    cvCreateTrackbar("Low Bright/Red ", "Control", &iLowV, 255); //Value (0 - 255)
+    cvCreateTrackbar("High Bright/Red", "Control", &iHighV, 255);
 
-    cvCreateTrackbar("Low Saturation/Green", "Control", &iLowS, 255); //Saturation (0 - 255)
-    cvCreateTrackbar("High Saturation/Green", "Control", &iHighS, 255);
-
-    cvCreateTrackbar("Low Brightness/Red", "Control", &iLowV, 255); //Value (0 - 255)
-    cvCreateTrackbar("High Brightness/Red", "Control", &iHighV, 255);
-
-    //cvCreateButton(nameButtonRgb, callbackButton, nameButtonRgb, CV_RADIOBOX, 1);
-    //cvCreateButton(const char *button_name = NULL, optional CvButtonCallback on_change = NULL, optional void *userdata = NULL, optional int button_type = CV_PUSH_BUTTON, optional int initial_button_state = 0)
+    //cvCreateButton(const char *button_name = NULL, optional CvButtonCallbackon_change = NULL, optional void *userdata = NULL, optional int button_type = CV_PUSH_BUTTON, optional int initial_button_state = 0)
 
     while (true)
     {
@@ -69,8 +70,13 @@ int main(int argc, char** argv)
 
         Mat imgThresholded;
 
-        //inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
-        inRange(imgOriginal, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+        if(buttonHSV == 0){
+            inRange(imgOriginal, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+            //cout << "RGB = " << buttonHSV <<endl;
+        }else{
+            inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+            //cout << "HSV =" << buttonHSV <<endl;
+        }
         //inRange(imgOriginal, Scalar(0,0,125),Scalar(200,200,255), imgThresholded); //Threshold the image
 
         //morphological opening (remove small objects from the foreground)
@@ -83,7 +89,6 @@ int main(int argc, char** argv)
         erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
         imshow("Thresholded Image", imgThresholded); //show the thresholded image
-
         imshow("Original", imgOriginal); //show the original image
 
         if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
@@ -93,21 +98,6 @@ int main(int argc, char** argv)
        }
     }
 
-
-
-
-
-
-
-    Mat image = imread("images/img3.jpg");
-    namedWindow("image",CV_WINDOW_FREERATIO);
-    imshow("image", image);
-
-    Mat OutputImage;
-    inRange(image,Scalar(0,0,125),Scalar(100,100,255), OutputImage); // Watch out Scalar in BGR
-
-    namedWindow("Output",CV_WINDOW_FREERATIO);
-    imshow("Output",OutputImage);
     waitKey(0);
 
     return 0;
