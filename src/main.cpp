@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
     namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-    int buttonHSV = 0;
+    int buttonHSV = 1;
 
     int iLowH = 75;
     int iHighH = 158;
