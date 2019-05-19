@@ -21,7 +21,7 @@ void thresh_callback(int, void* , Mat src, int thresh);
 
 int main(int argc, char** argv)
 {
-    VideoCapture cap(1); //capture the video from web cam
+    VideoCapture cap("/home/zugwang/Videos/Webcam/video_test2.mp4"); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 
 
      //Create trackbars in "Control" window
-    createTrackbar( " Canny thresh:", "Source", &thresh, max_thresh);
+    cvCreateTrackbar( " Canny thresh:", "Control", &thresh, max_thresh);
     cvCreateTrackbar("  RGB / HSB    ", "Control", &buttonHSV, 1);
     cvCreateTrackbar("Low Hue/Blue   ", "Control", &iLowH, 255); //Hue (0 - 179)
     cvCreateTrackbar("High Hue/Blue  ", "Control", &iHighH, 255);
