@@ -98,7 +98,8 @@ int main(int argc, char** argv)
 
         //cout << "VECTOOOOOOOOOOOOOOOOOOOR" << endl;
         vector<Vec3f> circles;
-        HoughCircles(imgThresholdedCircle, circles, CV_HOUGH_GRADIENT, 1, imgThresholdedCircle.rows/8, 400, 20, 0, 100);
+        HoughCircles(imgThresholdedCircle, circles, CV_HOUGH_GRADIENT, 1, imgThresholdedCircle.rows/8, 400, 50, 0, 50);
+
         //HoughCircles(InputArray image, OutputArray circles, int method, double dp, double minDist, optional double param1 = 100, optional double param2 = 100, optional int minRadius = 0, optional int maxRadius = 0)
         for(size_t i = 0; i < circles.size(); i++)
         {
