@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    VideoCapture cap(1); //capture the video from web cam
+    VideoCapture cap("/home/zugwang/Videos/Webcam/video_test2.mp4"); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
