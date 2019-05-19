@@ -20,7 +20,7 @@ void thresh_callback(int, void* , Mat src, int thresh);
 
 int main(int argc, char** argv)
 {
-    VideoCapture cap("/home/zugwang/Videos/Webcam/video_test2.mp4"); //capture the video from web cam
+    VideoCapture cap("images/video_test2.mp4"); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
@@ -154,12 +154,26 @@ void thresh_callback(int, void*, Mat src,int thresh)
   findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
   /// Draw contours
-  Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
-  for( int i = 0; i< contours.size(); i++ )
-     {
-       Scalar color = Scalar( 255,0,0 );
-       drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
-     }
+    Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+    for(unsigned int i = 0; i< contours.size(); i++ )
+    {
+        Scalar color = Scalar( 255,0,0 );
+        drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+    }
+    Rect rectangle;
+    vector<Point> tab;
+
+    for (unsigned int i = 0 ; i < contours.size(); i++)
+    {
+
+        rectangle = boundingRect (contours[i]);
+        Point c;
+        c.x = rectangle.x + rectangle.width/2; c.y = rectangle.y + rectangle.height/2;
+        circle(drawing, c, 50, (0,255,0));
+        tab.push_back(c);
+
+    }
+
 
   /// Show in a window
   namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
