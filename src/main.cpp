@@ -14,6 +14,10 @@
 using namespace cv;
 using namespace std;
 
+RNG rng(12345);
+
+void thresh_callback(int, void* , Mat src, int thresh);
+
 
 int main(int argc, char** argv)
 {
@@ -40,9 +44,13 @@ int main(int argc, char** argv)
     int iLowV = 117;
     int iHighV = 255;
 
+    int thresh = 100;
+    int max_thresh = 255;
+
 
 
      //Create trackbars in "Control" window
+    createTrackbar( " Canny thresh:", "Source", &thresh, max_thresh);
     cvCreateTrackbar("  RGB / HSB    ", "Control", &buttonHSV, 1);
     cvCreateTrackbar("Low Hue/Blue   ", "Control", &iLowH, 255); //Hue (0 - 179)
     cvCreateTrackbar("High Hue/Blue  ", "Control", &iHighH, 255);
@@ -110,6 +118,8 @@ int main(int argc, char** argv)
             circle(imgOriginal, center, radius, Scalar(0,0,255), 3, 8, 0);
         }
 
+        thresh_callback( 0, 0 , imgThresholded, thresh);
+
         namedWindow("Original", CV_WINDOW_FREERATIO);
         namedWindow("Thresholded Image", CV_WINDOW_FREERATIO);
         //namedWindow("Thresholded Image Circle", CV_WINDOW_FREERATIO);
@@ -131,4 +141,28 @@ int main(int argc, char** argv)
 
     return 0;
 
+}
+
+void thresh_callback(int, void*, Mat src,int thresh)
+{
+  Mat canny_output;
+  vector<vector<Point> > contours;
+  vector<Vec4i> hierarchy;
+
+  /// Detect edges using canny
+  Canny( src, canny_output, thresh, thresh*2, 3 );
+  /// Find contours
+  findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+  /// Draw contours
+  Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+  for( int i = 0; i< contours.size(); i++ )
+     {
+       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+       drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+     }
+
+  /// Show in a window
+  namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+  imshow( "Contours", drawing );
 }
