@@ -1,25 +1,19 @@
-// The "Square Detector" program.
-// It loads several images sequentially and tries to find squares in
-// each image
 #include <iostream>
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
-/*#include "opencv2/opencv.hpp"
-#include "opencv2/core/core.hpp"
-#include "colordetection.hpp"
-#include "opencv2/highgui/highgui.hpp"*/
+
+#include "video_pince.hpp"
 
 using namespace cv;
 using namespace std;
 
 
-void thresh_callback(int, void* , Mat src, int thresh);
-
 
 int main(int argc, char** argv)
 {
+    hello_world();
     VideoCapture cap("images/video_test2.mp4"); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
@@ -34,17 +28,13 @@ int main(int argc, char** argv)
 
     int buttonHSV = 1;
 
-    int iLowH = 75;
-    int iHighH = 158;
+    int iLowH = 75;    int iHighH = 158;
 
-    int iLowS = 120;
-    int iHighS = 232;
+    int iLowS = 120;    int iHighS = 232;
 
-    int iLowV = 117;
-    int iHighV = 255;
+    int iLowV = 117;    int iHighV = 255;
 
-    int thresh = 100;
-    int max_thresh = 255;
+    int thresh = 100;    int max_thresh = 255;
 
 
 
@@ -64,9 +54,7 @@ int main(int argc, char** argv)
 
     while (true)
     {
-        Mat imgOriginal;
-        Mat imgHSV;
-        Mat imgThresholded;
+        Mat imgOriginal, imgHSV, imgThresholded,drawing;
 
         bool bSuccess = cap.read(imgOriginal); // read a new frame from video
 
@@ -88,10 +76,8 @@ int main(int argc, char** argv)
             inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
             //cout << "HSV =" << buttonHSV <<endl;
         }
-        //inRange(imgOriginal, Scalar(0,0,125),Scalar(200,200,255), imgThresholded); //Threshold the image
 
         //morphological opening (remove small objects from the foreground)
-
         erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
         dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
@@ -99,15 +85,12 @@ int main(int argc, char** argv)
         dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
         erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
-        //cvtColor(imgThresholded, imgThresholdedGrayscale, CV_BGR2GRAY);
         Mat imgThresholdedCircle = imgThresholded;
         //GaussianBlur(imgThresholdedCircle, imgThresholdedCircle, Size(9,9), 2, 2);
 
-        //cout << "VECTOOOOOOOOOOOOOOOOOOOR" << endl;
         vector<Vec3f> circles;
         HoughCircles(imgThresholdedCircle, circles, CV_HOUGH_GRADIENT, 1, imgThresholdedCircle.rows/8, 400, 50, 0, 50);
 
-        //HoughCircles(InputArray image, OutputArray circles, int method, double dp, double minDist, optional double param1 = 100, optional double param2 = 100, optional int minRadius = 0, optional int maxRadius = 0)
         for(size_t i = 0; i < circles.size(); i++)
         {
             Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
@@ -117,14 +100,14 @@ int main(int argc, char** argv)
             circle(imgOriginal, center, radius, Scalar(0,0,255), 3, 8, 0);
         }
 
-        thresh_callback( 0, 0 , imgThresholded, thresh);
+        thresh_callback( 0, 0 , imgThresholded, thresh, drawing);
 
         namedWindow("Original", CV_WINDOW_FREERATIO);
         namedWindow("Thresholded Image", CV_WINDOW_FREERATIO);
-        //namedWindow("Thresholded Image Circle", CV_WINDOW_FREERATIO);
-        //imshow("Thresholded Image Circle", imgThresholdedCircle); //show the thresholded image
-        imshow("Thresholded Image", imgThresholded); //show the thresholded image
-        imshow("Original", imgOriginal); //show the original image
+        namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+        imshow("Thresholded Image", imgThresholded);
+        imshow("Original", imgOriginal);
+
 
 
 
@@ -136,63 +119,6 @@ int main(int argc, char** argv)
     }
 
     waitKey(0);
-
-
     return 0;
 
-}
-
-void thresh_callback(int, void*, Mat src,int thresh)
-{
-  Mat canny_output,thresholded_output;
-  vector<vector<Point> > contours;
-  vector<Vec4i> hierarchy;
-
-  /// Detect edges using canny
-  Canny( src, canny_output, thresh, thresh*2, 3 );
-  //Detect edges using tresholded
-  threshold(src,thresholded_output,thresh,255,THRESH_BINARY);
-  /// Find contours
-  findContours( thresholded_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-
-  vector<vector<Point> > contours_poly (contours.size() );
-  vector<Rect> boundRect (contours.size() );
-  vector<Point2f> center (contours.size() );
-  vector<float> radius (contours.size() );
-
-  for(unsigned int i = 0; i < contours.size(); i ++)
-  {
-    approxPolyDP (Mat(contours[i]), contours_poly[i], 3, true);
-    boundRect[i] = boundingRect (Mat (contours_poly[i]));
-    minEnclosingCircle( (Mat) contours_poly[i], center[i], radius[i]);
-  }
-
-  /// Draw contours
-    Mat drawing = Mat::zeros( thresholded_output.size(), CV_8UC3 );
-    for(unsigned int i = 0; i< contours.size(); i++ )
-    {
-        Scalar contour_color = Scalar( 255,0,0 );
-        Scalar center_color = Scalar( 0,255,0 );
-        drawContours( drawing, contours_poly, i, contour_color, 2, 8, hierarchy, 0, Point() );
-        circle(drawing, center[i], 3,center_color, 2 ,8 ,0 );
-    }
-    // Rect rectangle;
-    // vector<Point> tab;
-    //
-    // for (unsigned int i = 0 ; i < contours.size(); i++)
-    // {
-    //
-    //     rectangle = boundingRect (contours[i]);
-    //     rectangle(drawing, rectangle, (255,0,0), 1,8,0);
-    //     Point c;
-    //     c.x = rectangle.x + rectangle.width/2; c.y = rectangle.y + rectangle.height/2;
-    //     circle(drawing, c, 50, (0,255,0));
-    //     tab.push_back(c);
-    //
-    // }
-
-
-  /// Show in a window
-  namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-  imshow( "Contours", drawing );
 }
