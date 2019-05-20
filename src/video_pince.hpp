@@ -9,6 +9,7 @@
 
 void hello_world();
 void thresh_callback(int, void* , cv::Mat src, int thresh, cv::Mat output);
+void affichage();
 
 class Video_pince
 {

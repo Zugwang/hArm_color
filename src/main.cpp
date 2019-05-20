@@ -85,20 +85,6 @@ int main(int argc, char** argv)
         dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
         erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
-        Mat imgThresholdedCircle = imgThresholded;
-        //GaussianBlur(imgThresholdedCircle, imgThresholdedCircle, Size(9,9), 2, 2);
-
-        vector<Vec3f> circles;
-        HoughCircles(imgThresholdedCircle, circles, CV_HOUGH_GRADIENT, 1, imgThresholdedCircle.rows/8, 400, 50, 0, 50);
-
-        for(size_t i = 0; i < circles.size(); i++)
-        {
-            Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-            int radius = cvRound(circles[i][2]);
-
-            circle(imgOriginal, center, 3, Scalar(0,255,0), -1, 8, 0);
-            circle(imgOriginal, center, radius, Scalar(0,0,255), 3, 8, 0);
-        }
 
         thresh_callback( 0, 0 , imgThresholded, thresh, drawing);
 

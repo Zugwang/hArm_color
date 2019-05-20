@@ -9,6 +9,12 @@ void hello_world()
     cout << "Hello world" << endl;
 }
 
+void affichage()
+{
+    
+}
+
+
 void thresh_callback(int, void*, Mat src, int thresh, Mat output)
 {
   Mat canny_output,thresholded_output;
