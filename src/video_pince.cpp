@@ -30,14 +30,14 @@ myThreshold control_panel(myThreshold src_)
     int thresh = 100;
 
     //cvCreate trackbars in "Control" window
-    cvCreateTrackbar( "Canny thresh:", "Control", thresh, 255);
-    cvCreateTrackbar("  RGB / HSB    ", "Control", buttonHSV, 1);
-    cvCreateTrackbar("Low Hue/Blue   ", "Control", iLowH, 255); //Hue (0 - 179)
-    cvCreateTrackbar("High Hue/Blue  ", "Control", iHighH, 255);
-    cvCreateTrackbar("Low Sat/Green  ", "Control", iLowS, 255); //Saturation (0 - 255)
-    cvCreateTrackbar("High Sat/Green ", "Control", iHighS, 255);
-    cvCreateTrackbar("Low Bright/Red ", "Control", iLowV, 255); //Value (0 - 255)
-    cvCreateTrackbar("High Bright/Red", "Control", iHighV, 255);
+    cvCreateTrackbar( "Canny thresh:", "Control", &thresh, 255);
+    cvCreateTrackbar("  RGB / HSB    ", "Control", &buttonHSV, 1);
+    cvCreateTrackbar("Low Hue/Blue   ", "Control", &iLowH, 255); //Hue (0 - 179)
+    cvCreateTrackbar("High Hue/Blue  ", "Control", &iHighH, 255);
+    cvCreateTrackbar("Low Sat/Green  ", "Control", &iLowS, 255); //Saturation (0 - 255)
+    cvCreateTrackbar("High Sat/Green ", "Control", &iHighS, 255);
+    cvCreateTrackbar("Low Bright/Red ", "Control", &iLowV, 255); //Value (0 - 255)
+    cvCreateTrackbar("High Bright/Red", "Control", &iHighV, 255);
 
     src_.buttonHSV = buttonHSV;
     src_.iLowH = iLowH;
@@ -53,6 +53,37 @@ myThreshold control_panel(myThreshold src_)
 
 }
 
+void color_detection(Mat imgOriginal, myThreshold test)
+{
+    Mat drawing, imgHSV, imgThresholded;;
+    cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+
+    if(test.buttonHSV == 0){
+        inRange(imgOriginal, Scalar(test.iLowH, test.iLowS, test.iLowV), Scalar(test.iHighH, test.iHighS, test.iHighV), imgThresholded); //Threshold the image
+        //cout << "RGB = " << buttonHSV <<endl;
+    }else{
+        inRange(imgHSV, Scalar(test.iLowH, test.iLowS, test.iLowV), Scalar(test.iHighH, test.iHighS, test.iHighV), imgThresholded); //Threshold the image
+        //cout << "HSV =" << buttonHSV <<endl;
+    }
+
+    //morphological opening (remove small objects from the foreground)
+    erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+    dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+
+    //morphological closing (fill small holes in the foreground)
+    dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+    erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+
+
+    thresh_callback( 0, 0 , imgThresholded, test.thresh, drawing);
+
+    namedWindow("Original", CV_WINDOW_FREERATIO);
+    namedWindow("Thresholded Image", CV_WINDOW_FREERATIO);
+    namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+    imshow("Thresholded Image", imgThresholded);
+    imshow("Original", imgOriginal);
+
+}
 
 
 

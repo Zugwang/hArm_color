@@ -20,7 +20,8 @@ void hello_world();
 void thresh_callback(int, void* , cv::Mat src, int thresh, cv::Mat output);
 void affichage();
 
-myThreshold control_panel();
+myThreshold control_panel(myThreshold src_);
+void color_detection(cv::Mat imgOriginal, myThreshold test);
 
 class Video_pince
 {
