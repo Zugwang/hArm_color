@@ -18,39 +18,19 @@ int main(int argc, char** argv)
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
-         cout << "Cannot open the web cam" << endl;
-         return -1;
+        cout << "Cannot open the web cam" << endl;
+        return -1;
     }
 
-    Mat image = imread("images/cubes.jpg");
+    //create a window called "Control"
 
-    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+    myThreshold test;
 
-    int buttonHSV = 1;
-
-    int iLowH = 75;    int iHighH = 158;
-
-    int iLowS = 120;    int iHighS = 232;
-
-    int iLowV = 117;    int iHighV = 255;
-
-    int thresh = 100;    int max_thresh = 255;
+    test = control_panel(test);
 
 
 
-     //Create trackbars in "Control" window
-    cvCreateTrackbar( " Canny thresh:", "Control", &thresh, max_thresh);
-    cvCreateTrackbar("  RGB / HSB    ", "Control", &buttonHSV, 1);
-    cvCreateTrackbar("Low Hue/Blue   ", "Control", &iLowH, 255); //Hue (0 - 179)
-    cvCreateTrackbar("High Hue/Blue  ", "Control", &iHighH, 255);
-    cvCreateTrackbar("Low Sat/Green  ", "Control", &iLowS, 255); //Saturation (0 - 255)
-    cvCreateTrackbar("High Sat/Green ", "Control", &iHighS, 255);
-    cvCreateTrackbar("Low Bright/Red ", "Control", &iLowV, 255); //Value (0 - 255)
-    cvCreateTrackbar("High Bright/Red", "Control", &iHighV, 255);
 
-    //cvCreateButton(const char *button_name = NULL, optional CvButtonCallbackon_change = NULL, optional void *userdata = NULL, optional int button_type = CV_PUSH_BUTTON, optional int initial_button_state = 0)
-
-    //imshow("image",image);
 
     while (true)
     {
