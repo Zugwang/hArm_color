@@ -9,9 +9,13 @@ void hello_world()
     cout << "Hello world" << endl;
 }
 
-void affichage()
+vector<Point> maFonction(int a)
 {
+    for(int i = 0; i < a ; i++)
+    {
+        vector<Point> batman (a);
 
+    }
 }
 
 void myFuncPanel(int value, void *userdata)
@@ -53,7 +57,7 @@ myThreshold control_panel(myThreshold src_)
 
 }
 
-void color_detection(Mat imgOriginal, myThreshold test)
+vector<Point2f> color_detection(Mat imgOriginal, myThreshold test)
 {
     Mat drawing, imgHSV, imgThresholded;;
     cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
@@ -74,8 +78,8 @@ void color_detection(Mat imgOriginal, myThreshold test)
     dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
     erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
-
-    thresh_callback( 0, 0 , imgThresholded, test.thresh, drawing);
+    vector<Point2f> center;
+    center = thresh_callback( 0, 0 , imgThresholded, test.thresh, drawing);
 
     namedWindow("Original", CV_WINDOW_FREERATIO);
     namedWindow("Thresholded Image", CV_WINDOW_FREERATIO);
@@ -83,12 +87,14 @@ void color_detection(Mat imgOriginal, myThreshold test)
     imshow("Thresholded Image", imgThresholded);
     imshow("Original", imgOriginal);
 
+    return center;
+
 }
 
 
 
 
-void thresh_callback(int, void*, Mat src, int thresh, Mat output)
+vector<Point2f> thresh_callback(int, void*, Mat src, int thresh, Mat output)
 {
   Mat canny_output,thresholded_output;
   vector<vector<Point> > contours;
@@ -124,7 +130,10 @@ void thresh_callback(int, void*, Mat src, int thresh, Mat output)
     }
 
 
+
     imshow( "Contours", output );
+
+    return center;
 
   /// Show in a window
 }

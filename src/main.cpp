@@ -40,7 +40,7 @@ int main(int argc, char** argv)
              break;
         }
 
-        color_detection(imgOriginal, test, );
+        color_detection(imgOriginal, test);
 
 
         if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop

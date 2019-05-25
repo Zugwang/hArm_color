@@ -17,11 +17,10 @@ struct myThreshold
 };
 
 void hello_world();
-void thresh_callback(int, void* , cv::Mat src, int thresh, cv::Mat output);
-void affichage();
+std::vector<cv::Point2f> thresh_callback(int, void* , cv::Mat src, int thresh, cv::Mat output);
 
 myThreshold control_panel(myThreshold src_);
-void color_detection(cv::Mat imgOriginal, myThreshold test);
+std::vector<cv::Point2f> color_detection(cv::Mat imgOriginal, myThreshold test);
 
 class Video_pince
 {
